@@ -12,27 +12,6 @@ import sys
 import logging
 
 
-class JSONReader:
-    """
-    Extracts the instructions from the .txt file and converts them to valid Python dictionaries.
-    """
-
-    def __init__(self, _file_name: str):
-        self.file_name = _file_name
-
-        self.parsed_line = {}
-
-    def create_json_iterator(self):
-        """
-        Simply reads the input text file as a string.
-        :return:
-        """
-        with open(self.file_name) as file:
-            for line in file:
-                self.parsed_line = json.loads(line)
-                yield self.parsed_line
-
-
 class Robot:
     """
     Robot object that updates the position of the robot based on movement data received.
@@ -59,12 +38,12 @@ class Robot:
         self.current_robot_position = None
         self.bearing = None
 
-        self.bearing_num = int()
-        self.movement_key = int()
-        self.y = int()
-        self.x = int()
+        self.bearing_num = None
+        self.movement_key = None
+        self.y = None
+        self.x = None
 
-        self.robot_output_dict = dict()
+        self.robot_output_dict = None
 
     def add_initial_data(self):
         self.current_robot_position = self.new_robot_json["position"]
@@ -105,7 +84,6 @@ class Robot:
         Updates the current_status with the data contained in the move_command.
         :return:
         """
-
         movement = move_command.get("movement")
         if re.fullmatch(r"turn-\w+", movement):
             self.change_direction(movement)
@@ -132,9 +110,9 @@ class Asteroid:
         self.asteroid_size_x = self.new_asteroid_dict["size"]["x"]
         self.asteroid_size_y = self.new_asteroid_dict["size"]["y"]
 
-        self.asteroid_boundary = dict()
+        self.asteroid_boundary = None
 
-        self.robot_final_positions_list = []
+        self.robot_final_positions_list = None
 
         self.asteroid_boundary_warning = False
 
@@ -156,7 +134,6 @@ class AsteroidRobotDataParser:
 
     def __init__(self, _file_name):
         self.file_name = _file_name
-        self.json_iterator = JSONReader(file_name).create_json_iterator()
 
         self.current_asteroid = None
         self.current_robot = None
@@ -200,9 +177,10 @@ class AsteroidRobotDataParser:
         self.data_type_parser[data_type]()
 
     def run_data_parser(self):
-        for data_line in self.json_iterator:
-            self.current_data_line = data_line
-            self.parse_data_line_by_type()
+        with open(self.file_name) as file:
+            for line in file:
+                self.current_data_line = json.loads(line)
+                self.parse_data_line_by_type()
         self.print_final_position()
 
 

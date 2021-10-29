@@ -22,20 +22,6 @@ SAMPLE_FINAL_POSITION = [{"type": "new-robot", "position": {"x": 1, "y": 2}, "be
 SAMPLE_ASTEROID = {'type': 'asteroid', 'size': {'x': 10, 'y': 20}}
 
 
-def test_read_file():
-    json_reader = robots.JSONReader(TEST_TXT_FILE)
-    json_iterator = json_reader.create_json_iterator()
-
-    assert next(json_iterator) == {"type": "asteroid", "size": {"x": 5, "y": 5}}
-
-
-def test_converted_json():
-    json_reader = robots.JSONReader(TEST_TXT_FILE)
-    json_iterator = json_reader.create_json_iterator()
-
-    assert len(set(type(i) for i in json_iterator)) == 1
-
-
 def test_add_initial_data():
     robot = robots.Robot(SAMPLE_NEW_ROBOT)
     robot.add_initial_data()
@@ -134,6 +120,3 @@ def test_construct_asteroid_boundary():
         "x": {"max": 10, "min": -10},
         "y": {"max": 20, "min": -20}
     }
-
-
-
